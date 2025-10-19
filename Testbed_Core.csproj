@@ -9,19 +9,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <COMReference Include="{215d64d2-031c-33c7-96e3-61794cd1ee61}">
-      <WrapperTool>tlbimp</WrapperTool>
-      <VersionMinor>4</VersionMinor>
-      <VersionMajor>2</VersionMajor>
-      <Guid>215d64d2-031c-33c7-96e3-61794cd1ee61</Guid>
-    </COMReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Assets\" />
-    <Folder Include="Equations\" />
-    <Folder Include="Resources\" />
-    <Folder Include="UI\" />
+    <Compile Remove="Assets\**" />
+    <Compile Remove="Equations\**" />
+    <Compile Remove="Resources\**" />
+    <Compile Remove="UI\**" />
+    <EmbeddedResource Remove="Assets\**" />
+    <EmbeddedResource Remove="Equations\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <EmbeddedResource Remove="UI\**" />
+    <None Remove="Assets\**" />
+    <None Remove="Equations\**" />
+    <None Remove="Resources\**" />
+    <None Remove="UI\**" />
+    <Page Remove="Assets\**" />
+    <Page Remove="Equations\**" />
+    <Page Remove="Resources\**" />
+    <Page Remove="UI\**" />
   </ItemGroup>
 
   <ItemGroup>
