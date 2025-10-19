@@ -1,0 +1,22 @@
+﻿id: poisson
+name: Newtonian Poisson (placeholder)
+description: "Solve ∇²φ = 4πGρ in weak-field limit (placeholder backend)."
+domain: gravity
+expr:
+  latex: "\\nabla^2 \\phi = 4\\pi G\\rho"
+  infix: "laplacian(phi) = 4*pi*G*rho"
+parameters:
+  - key: gridSize
+    label: "Grid Size"
+    type: int
+    default: 256
+  - key: timeSteps
+    label: "Time Steps"
+    type: int
+    default: 1000
+backend:
+  kind: "python"   # or "wsl" or "docker" later
+  command: "python run_poisson.py --grid {gridSize} --steps {timeSteps} --out \"{outDir}\""
+outputs:
+  - "phi.h5"
+  - "run.log"

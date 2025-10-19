@@ -1,0 +1,238 @@
+﻿<Window x:Class="LugonTestbed.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Lugon Testbed" Height="740" Width="1220"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource SurfaceBrush}">
+    <DockPanel LastChildFill="True">
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New Run..." Click="NewRun_Click" />
+                <MenuItem Header="_Open Last Run" Click="OpenLastRun_Click" />
+                <MenuItem Header="Open _Runs Folder" Click="OpensRunsFolder_Click" />
+                <Separator/>
+                <MenuItem Header="_Settings..." Click="OpenSettings_Click"/>
+                <Separator/>
+                <MenuItem Header="E_xit" Click="ExitApp_Click"/>
+            </MenuItem>
+
+            <MenuItem Header="_Run">
+                <MenuItem Header="_Launch" Click="Launch_Click"/>
+                <MenuItem Header="Add to _Queue" Click="AddToQueueButton_Click"/>
+                <MenuItem Header="_Run Queue" Click="RunQueueButton_Click"/>
+                <MenuItem Header="_Aggregate Results" Click="AggregateButton_Click"/>
+                <Separator/>
+                <MenuItem Header="_Cancel Current" Click="CancelRun_Click" IsEnabled="False"/>
+            </MenuItem>
+
+            <MenuItem Header="_Profiles">
+                <MenuItem Header="Build _New Test Profile..." Click="BuildNewProfile_Click"/>
+                <MenuItem Header="_Manage Profiles..." Click="ManageProfiles_Click"/>
+                <MenuItem Header="Reload Profiles" Click="ReloadProfiles_Click"/>
+            </MenuItem>
+
+            <MenuItem Header="_Symbols">
+                <MenuItem Header="_Insert Symbol..." Click="InsertSymbol_Click"/>
+                <MenuItem Header="_Manage Symbols..." Click="ManageSymbols_Click"/>
+                <Separator/>
+                <MenuItem Header="Active _Symbol Project ▸" ItemsSource="{Binding AvailableProjects}" />
+                <MenuItem Header="_Import Symbols..." Click="ImportSymbols_Click"/>
+                <MenuItem Header="_Export Symbols..." Click="ExportSymbols_Click"/>
+            </MenuItem>
+
+            <MenuItem Header="_View">
+                <MenuItem Header="Toggle _Log" Click="ToggleLog_Click"/>
+                <MenuItem Header="_Theme ▸">
+                    <MenuItem Header="_Dark" Click="SetDarkTheme_Click"/>
+                    <MenuItem Header="_Light" Click="SetLightTheme_Click"/>
+                </MenuItem>
+            </MenuItem>
+
+            <MenuItem Header="_Tools">
+                <MenuItem Header="Python _Environment..." Click="ManagePythonEnv_Click"/>
+                <MenuItem Header="_Validate Backends" Click="ValidateBackends_Click"/>
+                <MenuItem Header="Open _Config Folder" Click="OpenConfigFolder_Click"/>
+            </MenuItem>
+
+            <MenuItem Header="_Help">
+                <MenuItem Header="_About" Click="About_Click"/>
+                <MenuItem Header="_Diagnostics" Click="OpenDiagnostics_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Sidebar -->
+            <Border Grid.Column="0" Background="{StaticResource CardBrush}" Padding="16">
+                <StackPanel>
+                    <TextBlock Text="Lugon Testbed" FontSize="22" FontWeight="Bold" Margin="2,0,0,12"/>
+                    <TextBlock Text="Backend" Foreground="{StaticResource MutedText}" Margin="0,0,0,4"/>
+                    <ComboBox x:Name="BackendCombo"
+                        SelectedIndex="0"
+                        Style="{StaticResource DarkComboBoxStyle}">
+                        <ComboBox.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#0B0D11"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#1F2937"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#D0D5DB"/>
+                        </ComboBox.Resources>
+                        <ComboBoxItem Content="GRChombo"/>
+                        <ComboBoxItem Content="Einstein Toolkit"/>
+                        <ComboBoxItem Content="CLASS"/>
+                        <ComboBoxItem Content="GADGET-4"/>
+                    </ComboBox>
+                    <TextBlock Text="Equation" Foreground="{StaticResource MutedText}" Margin="0,12,0,4"/>
+                    <ComboBox x:Name="EquationCombo"
+                        Style="{StaticResource DarkComboBoxStyle}">
+                        <ComboBox.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#0B0D11"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#1F2937"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#D0D5DB"/>
+                        </ComboBox.Resources>
+                    </ComboBox>
+
+                    <Button x:Name="NewRunButton" Content="New Run" Click="NewRun_Click" Style="{StaticResource BlueButtonStyle}" Height="28" Margin="0,6,0,0"/>
+                    <Button x:Name="OpenRunsFolderButton" Content="Open Runs Folder" Click="OpensRunsFolder_Click" Style="{StaticResource BlueButtonStyle}" Height="28" Margin="0,3,0,0"/>
+                    <Button x:Name="OpenLastRunButton" Content="Open Last Run" Click="OpenLastRun_Click" Style="{StaticResource BlueButtonStyle}" Height="28" Margin="0,3,0,0" IsEnabled="False"/>
+                    <Button x:Name="LaunchDryRunButton" Content="Launch (dry run)" Click="LaunchDryRun_Click" Style="{StaticResource BlueButtonStyle}" Height="28" Margin="0,3,0,0"/>
+                    <Button x:Name="LaunchExecuteButton" Content="Launch (execute)" Click="Launch_Click" IsEnabled="False" Style="{StaticResource BlueButtonStyle}" Height="28" Margin="0,3,0,0"/>
+
+                    <Separator Margin="0,16,0,10"/>
+                    <TextBlock Text="Status" Foreground="{StaticResource MutedText}" />
+                    <TextBlock x:Name="StatusText"
+                               Text="Ready."
+                               TextWrapping="Wrap"
+                               Foreground="{StaticResource AccentBrush}"
+                               Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Main content -->
+            <Grid Grid.Column="1" Margin="16,16,16,16">
+                <TabControl>
+                    <TabItem Header="Parameters">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="8">
+                            <StackPanel>
+                                <TextBlock Text="Simulation Parameters" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <DockPanel Margin="0,6,0,0">
+                                    <TextBlock Text="Grid Size:" Width="140" VerticalAlignment="Center" Foreground="{StaticResource MutedText}"/>
+                                    <TextBox x:Name="GridSizeBox" Width="120" Text="256" HorizontalAlignment="Left"/>
+                                </DockPanel>
+                                <DockPanel Margin="0,6,0,0">
+                                    <TextBlock Text="Time Steps:" Width="140" VerticalAlignment="Center" Foreground="{StaticResource MutedText}"/>
+                                    <TextBox x:Name="TimeStepsBox" Width="120" Text="1000" HorizontalAlignment="Left"/>
+                                </DockPanel>
+                                <!-- Output Dir row: label | textbox | button -->
+                                <Grid Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="400"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                       Text="Output Dir:"
+                                       VerticalAlignment="Center"
+                                       Foreground="{StaticResource MutedText}"/>
+                                    <TextBox Grid.Column="1"
+                                         x:Name="OutputDirBox"
+                                         Text="F:\Lugon Framework\testbed\runs"
+                                         HorizontalAlignment="Stretch"
+                                         MinWidth="300"/>
+                                    <Button Grid.Column="2"
+                                        x:Name="PickRunsRootButton"
+                                        Content="Select Directory"
+                                        Click="PickRunsRoot_Click"
+                                        Style="{StaticResource BlueButtonStyle}"
+                                        Height="28"
+                                        Width="100"
+                                        Margin="8,0,0,0"/>
+                                </Grid>
+                                <DockPanel Margin="0,6,0,0">
+                                    <TextBlock Text="Seed (int or leave blank):" Width="140" VerticalAlignment="Center" Foreground="{StaticResource MutedText}"/>
+                                    <TextBox x:Name="SeedBox" Width="120" Text="" HorizontalAlignment="Left"/>
+                                </DockPanel>
+                                <DockPanel Margin="0,6,0,0">
+                                    <TextBlock Text="Replicates (n):" Width="140" VerticalAlignment="Center" Foreground="{StaticResource MutedText}"/>
+                                    <TextBox x:Name="ReplicatesBox" Width="120" Text="1" HorizontalAlignment="Left"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <TabItem Header="Queue">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Queue toolbar -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8" Grid.Row="0">
+                                <Button x:Name="AddToQueueButton"
+                                    Content="Add Current as Queue Item"
+                                    Click="AddToQueueButton_Click"
+                                    Style="{StaticResource BlueButtonStyle}"
+                                    Height="28"
+                                    Margin="0,0,8,0"/>
+                                <Button x:Name="RemoveQueueItemButton"
+                                    Content="Remove Selected"
+                                    Click="RemoveQueueItemButton_Click"
+                                    Style="{StaticResource BlueButtonStyle}"
+                                    Height="28"
+                                    Margin="0,0,8,0"/>
+                                <Button x:Name="RunQueueButton"
+                                    Content="Run Queue"
+                                    Click="RunQueueButton_Click"
+                                    Style="{StaticResource BlueButtonStyle}"
+                                    Height="28"
+                                    Margin="0,0,8,0"/>
+                                <Button x:Name="AggregateButton"
+                                    Content="Aggregate Replicates"
+                                    Click="AggregateButton_Click"
+                                    Style="{StaticResource BlueButtonStyle}"
+                                    Height="28"/>
+                            </StackPanel>
+
+
+                            <!-- Queue list -->
+                            <ListView x:Name="QueueList" Grid.Row="1">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="When" Width="160" DisplayMemberBinding="{Binding EnqueuedAt}"/>
+                                        <GridViewColumn Header="Equation" Width="220" DisplayMemberBinding="{Binding EquationName}"/>
+                                        <GridViewColumn Header="Grid" Width="80" DisplayMemberBinding="{Binding Grid}"/>
+                                        <GridViewColumn Header="Steps" Width="80" DisplayMemberBinding="{Binding Steps}"/>
+                                        <GridViewColumn Header="Output" Width="400" DisplayMemberBinding="{Binding OutDir}"/>
+                                        <GridViewColumn Header="Status" Width="120" DisplayMemberBinding="{Binding Status}"/>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </Grid>
+                    </TabItem>
+
+                    <TabItem Header="Results">
+                        <Grid Margin="8">
+                            <TextBlock Text="Results and plots will appear here."/>
+                        </Grid>
+                    </TabItem>
+
+                    <TabItem Header="Logs">
+                        <Grid Margin="8">
+                            <TextBox x:Name="LogBox"
+                                     IsReadOnly="True"
+                                     AcceptsReturn="True"
+                                     VerticalScrollBarVisibility="Auto"
+                                     Background="#0B0D11"
+                                     Foreground="#D0D5DB"
+                                     Text="(process output will stream here)"/>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</Window>
+

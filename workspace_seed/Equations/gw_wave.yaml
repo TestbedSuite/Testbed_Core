@@ -1,0 +1,22 @@
+id: gw_wave
+name: GW Propagation (toy)
+description: "Luminal propagation with bounded phase residue (toy)."
+domain: gravity
+expr:
+  latex: "\\Box h_{\\mu\\nu} = 0"
+  infix: "d2(h)/dt2 - c^2*laplacian(h) = 0"
+parameters:
+  - key: gridSize
+    label: "Grid Size"
+    type: int
+    default: 512
+  - key: timeSteps
+    label: "Time Steps"
+    type: int
+    default: 2000
+backend:
+  kind: "python"
+  command: "python run_gw.py --N {gridSize} --T {timeSteps} --out \"{outDir}\""
+outputs:
+  - "h.h5"
+  - "run.log"

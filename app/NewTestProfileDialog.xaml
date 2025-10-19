@@ -1,0 +1,141 @@
+﻿<Window x:Class="LugonTestbed.NewTestProfileDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        Title="New Test Profile" Height="640" Width="960"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource SurfaceBrush}"
+        ResizeMode="CanResizeWithGrip"
+        MinHeight="540" MinWidth="840"
+        >
+    <DockPanel LastChildFill="True">
+        <!-- Header -->
+        <Border DockPanel.Dock="Top" Padding="12" Background="{DynamicResource CardBrush}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="New Test Profile" FontSize="18" FontWeight="SemiBold" />
+                <TextBlock x:Name="PathPreview"
+                           Margin="12,0,0,0"
+                           Foreground="{DynamicResource MutedText}"
+                           VerticalAlignment="Center"
+                           Text="Equations/&lt;id&gt;.yaml"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Footer -->
+        <Grid DockPanel.Dock="Bottom" Background="{DynamicResource SurfaceBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="ValidationSummary"
+                       Foreground="{DynamicResource MutedText}"
+                       VerticalAlignment="Center"
+                       Text="Fill required fields and click Save."/>
+            <Button Grid.Column="1" Margin="8,0,0,0" Padding="16,6"
+                    Content="Cancel" Click="Cancel_Click"/>
+            <Button Grid.Column="2" Margin="8,0,0,0" Padding="16,6"
+                    Content="Save Profile" Click="Save_Click"
+                    x:Name="SaveButton"/>
+        </Grid>
+
+        <!-- Main 3-pane layout -->
+        <Grid Margin="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="360"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: Checklist -->
+            <Border Grid.Column="0" Padding="12" Background="{DynamicResource CardBrush}">
+                <StackPanel>
+                    <TextBlock Text="Sections" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <!-- Required (fixed) -->
+                    <StackPanel Margin="0,8,0,0">
+                        <TextBlock Text="Required" FontWeight="SemiBold" />
+                        <CheckBox Content="id" IsChecked="True" IsEnabled="False" />
+                        <CheckBox Content="name" IsChecked="True" IsEnabled="False" />
+                        <CheckBox Content="description" IsChecked="True" IsEnabled="False" />
+                        <CheckBox Content="backend/kind" IsChecked="True" IsEnabled="False" />
+                        <CheckBox Content="backend/command" IsChecked="True" IsEnabled="False" />
+                        <CheckBox Content="outputs" IsChecked="True" IsEnabled="False" />
+                    </StackPanel>
+                    <!-- Optional -->
+                    <StackPanel Margin="0,16,0,0">
+                        <TextBlock Text="Common" FontWeight="SemiBold" />
+                        <CheckBox x:Name="OptDomain" Content="domain" IsChecked="True"/>
+                        <CheckBox x:Name="OptExprLatex" Content="expr/latex" IsChecked="True"/>
+                        <CheckBox x:Name="OptExprInfix" Content="expr/infix" />
+                        <CheckBox x:Name="OptParameters" Content="parameters" IsChecked="True"/>
+                        <CheckBox x:Name="OptNotes" Content="notes" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Center: Form (skeleton fields only for now) -->
+            <ScrollViewer Grid.Column="1" Padding="12" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Profile Details" FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- id / name / description -->
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="id:" Width="140" VerticalAlignment="Center"/>
+                        <TextBox x:Name="IdBox" Width="220" TextChanged="IdBox_TextChanged"/>
+                    </DockPanel>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="name:" Width="140" VerticalAlignment="Center"/>
+                        <TextBox x:Name="NameBox" Width="320"/>
+                    </DockPanel>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="description:" Width="140" VerticalAlignment="Top"/>
+                        <TextBox x:Name="DescBox" Width="520" Height="60" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    </DockPanel>
+
+                    <!-- backend -->
+                    <TextBlock Text="Backend" FontWeight="SemiBold" Margin="0,16,0,4"/>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="kind:" Width="140" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="KindBox" Width="160" SelectedIndex="0">
+                            <ComboBoxItem Content="python"/>
+                        </ComboBox>
+                    </DockPanel>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="command:" Width="140" VerticalAlignment="Top"/>
+                        <TextBox x:Name="CommandBox"
+                             Width="520" Height="80"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             Text=""/>
+                    </DockPanel>
+
+                    <!-- outputs -->
+                    <TextBlock Text="Outputs" FontWeight="SemiBold" Margin="0,16,0,4"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="OutputOne" Width="220" Text="run.log" Margin="0,0,8,0"/>
+                        <Button Content="+ Add more (later)" IsEnabled="False"/>
+                    </StackPanel>
+
+                    <!-- Optional sections placeholders -->
+                    <Separator Margin="0,16,0,8"/>
+                    <TextBlock Text="Optional sections (coming next step)" Foreground="{DynamicResource MutedText}"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Right: Preview -->
+            <Border Grid.Column="2" Padding="12" Background="{DynamicResource CardBrush}">
+                <StackPanel>
+                    <TextBlock Text="YAML Preview" FontWeight="SemiBold"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Height="480" Margin="0,8,0,8">
+                        <TextBlock x:Name="YamlPreview"
+                                   FontFamily="Consolas"
+                                   TextWrapping="Wrap"
+                                   Text="(preview will appear after Save in this first step)"/>
+                    </ScrollViewer>
+                    <TextBlock Text="Command Preview (next step)" Foreground="{DynamicResource MutedText}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
+</Window>
+

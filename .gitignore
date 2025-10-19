@@ -416,3 +416,8 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Ignore local Python environment
+backend/py/.venv/
+.env/
+.venv/
